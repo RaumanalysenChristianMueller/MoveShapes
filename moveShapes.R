@@ -67,6 +67,10 @@ bg <- readOGR(shp_dir, bg_shp)
 # reproject background map
 bg <- spTransform(bg, WGSproj)
 
+# load logo
+logo <- readPNG(paste0(getwd(), "/Logo.png"))
+
+
 # create output folder for individual images
 im_dir <- paste0(save_dir, "/moveShapes_images")
 if (!dir.exists(im_dir)) dir.create(im_dir)
@@ -128,7 +132,17 @@ for (s in 1:length(shps_names)){
     legend("bottomright", cex = 5,
            fill = c("lightblue", "coral"),
            legend = paste0(c(bg_shp_name_show, lg_name_show), "     "))
-      
+    
+    # add logo
+    dif1 <- (par("usr")[2] - par("usr")[1])
+    dif2 <- (par("usr")[4] - par("usr")[3])
+    rat <- 3840/2160
+    rasterImage(logo, par("usr")[1], par("usr")[3], par("usr")[1] + dif1/30, par("usr")[3] + (dif2/30 * rat))
+    
+    # add contact
+    text(x = par("usr")[1] + dif1/25, y = par("usr")[3] + ((dif2/30 * rat)/2), cex = 3, xpd = T,
+         labels = "raumanalysen@mailbox.org", col = rgb(244, 100, 48, maxColorValue = 255))
+    
     # close image file
     dev.off()
       
