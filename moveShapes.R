@@ -28,6 +28,8 @@ for (i in 1:2){
   if (!require("animation")) install.packages("animation", dependencies = T)
   if (!require("png")) install.packages("png", dependencies = T)
   if (!require("extrafont")) install.packages("extrafont", dependencies = T)
+  if (!require("tcltk")) install.packages("tcltk", dependencies = T)
+  if (!require("tcltk2")) install.packages("tcltk2", dependencies = T)
 }
 
 # install ffmpeg codec if necessary
@@ -36,15 +38,22 @@ if (Sys.which('ffmpeg') == ""){
   install_ffmpeg()
 }
 
+# create progress bar
+try(tk <- tktoplevel(), silent = T)
+try(tk2ico.setFromFile(win = tk, iconfile =  paste0(getwd(), "/Logo.ico")), silent = T)
+try(tktitle(tk) <- "Raumanalysen - Christian Mueller - moveShapes", silent = T)
+try(tk_lab <- tk2label(tk), silent = T)
+try(tk_pb <- tk2progress(tk, length = 500), silent = T)
+try(tkgrid(tk_lab, row = 0), silent = T)
+try(tkgrid(tk_pb, row = 1), silent = T)
+
 # load fonts if necessary (with progress bar)
-pr_bar <- winProgressBar(title = "moveShapes - Raumanalysen_Christian_Müller",
-                         label = "Schriften werden geladen (dieser Prozess wird nur beim ersten Ausführen durchgeführt)...",
-                         min = 1, max = 100, width = 500, initial = 80)
+try(tkconfigure(tk_lab, text = "Schriften werden geladen (dieser Prozess wird nur beim ersten Ausführen durchgeführt)..."), silent = T)
+try(tkconfigure(tk_pb, value = 1, maximum = 100), silent = T)
 if (is.null(fonts())){
   font_import(prompt = F)
   loadfonts()
 }
-close(pr_bar)
 
 
 # define coordinate system
@@ -85,9 +94,10 @@ ntrans <- 200
 nt <- length(shps_names) * ntrans
 
 
-# create progress bar
-pr_bar <- winProgressBar(title = "moveShapes - Raumanalysen_Christian_Müller", label = "moveShapes erzeugt einzelne Bilder",
-                         min = 1, max = nt + 5, width = 500)
+# update progress bar
+try(tkconfigure(tk_lab, text = "moveShapes erzeugt einzelne Bilder..."), silent = T)
+try(tkconfigure(tk_pb, value = 1, maximum = nt + 5), silent = T)
+
 
 # create individual frames as png
 # create plots
@@ -140,7 +150,7 @@ for (s in 1:length(shps_names)){
     rasterImage(logo, par("usr")[1], par("usr")[3], par("usr")[1] + dif1/30, par("usr")[3] + (dif2/30 * rat))
     
     # add contact
-    text(x = par("usr")[1] + dif1/25, y = par("usr")[3] + ((dif2/30 * rat)/2), cex = 3, xpd = T,
+    text(x = par("usr")[1] + dif1/10, y = par("usr")[3] + ((dif2/30 * rat)/2), cex = 3, xpd = T,
          labels = "raumanalysen@mailbox.org", col = rgb(244, 100, 48, maxColorValue = 255))
     
     # close image file
@@ -148,8 +158,8 @@ for (s in 1:length(shps_names)){
       
     
     # increase count variable and progress bar
-    setWinProgressBar(pr_bar, t,
-                      label = paste0("moveShapes erzeugt einzelne Bilder...", round(t / nt * 100, 0), " %"))
+    try(tkconfigure(tk_lab, text = paste0("moveShapes erzeugt einzelne Bilder...", round(t / nt * 100, 0), " %")), silent = T)
+    try(tkconfigure(tk_pb, value = t, maximum = nt + 5), silent = T)
     t <- t + 1
       
       
@@ -157,12 +167,10 @@ for (s in 1:length(shps_names)){
     
 }
   
-# close progress bar
-close(pr_bar)
 
 # create new progress bar
-pr_bar <- winProgressBar(title = "moveShapes - Raumanalysen_Christian_Müller", label = "moveShapes fügt einzelne Bilder zu einem Video zusammen",
-                         min = 1, max = 100, width = 500, initial = 99)
+try(tkconfigure(tk_lab, text = "moveShapes fügt einzelne Bilder zu einem Video zusammen"), silent = T)
+try(tkconfigure(tk_pb, value = 99, maximum = 100), silent = T)
 
 
 # building a system command line
@@ -179,4 +187,4 @@ sys_com <- paste0(
 system(sys_com)
 
 # close progress bar
-close(pr_bar)
+tkdestroy(tk)
