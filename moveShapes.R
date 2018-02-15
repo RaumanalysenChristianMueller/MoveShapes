@@ -2,6 +2,8 @@
 # Raumanalysen - Christian Mueller
 # raumanalysen@mailbox.org
 
+options(encoding = "UTF-8")
+
 # data input
 shp_dir <- "C:/Raumanalysen_ChristianMueller/Projekte/Bergheim_Animation/Arbeitsdaten"
 shps_names <- c("Uraufnahme_Staedte",
@@ -14,7 +16,7 @@ shps_show_names <- c("Uraufnahme",
                      "1936-1945",
                      "1988-1994",
                      "2015")
-lg_name_show <- "StÃ¤dte im Laufe der Zeit"
+lg_name_show <- "Städte im Laufe der Zeit"
 bg_shp <- "Stadtgebiet"
 bg_shp_name_show <- "heutiges Stadtgebiet"
 save_dir <- "C:/Raumanalysen_ChristianMueller/Projekte/Bergheim_Animation/Arbeitsdaten"
@@ -48,7 +50,7 @@ try(tkgrid(tk_lab, row = 0), silent = T)
 try(tkgrid(tk_pb, row = 1), silent = T)
 
 # load fonts if necessary (with progress bar)
-try(tkconfigure(tk_lab, text = "Schriften werden geladen (dieser Prozess wird nur beim ersten AusfÃ¼hren durchgefÃ¼hrt)..."), silent = T)
+try(tkconfigure(tk_lab, text = "Schriften werden geladen (dieser Prozess wird nur beim ersten AusfÃ¼hren durchgeführt)..."), silent = T)
 try(tkconfigure(tk_pb, value = 1, maximum = 100), silent = T)
 if (is.null(fonts())){
   font_import(prompt = F)
@@ -169,7 +171,7 @@ for (s in 1:length(shps_names)){
   
 
 # create new progress bar
-try(tkconfigure(tk_lab, text = "moveShapes fÃ¼gt einzelne Bilder zu einem Video zusammen"), silent = T)
+try(tkconfigure(tk_lab, text = "moveShapes fügt einzelne Bilder zu einem Video zusammen"), silent = T)
 try(tkconfigure(tk_pb, value = 99, maximum = 100), silent = T)
 
 
